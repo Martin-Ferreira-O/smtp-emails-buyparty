@@ -16,7 +16,7 @@ const smtpConfig = {
     },
     from: process.env.HEAVEN_SMTP_FROM || 'no-reply@heaven.ticketfacil.live',
     tls: {
-      rejectUnauthorized: process.env.NODE_ENV === 'production' // Rechazar conexiones no autorizadas en producción
+      rejectUnauthorized: false //process.env.NODE_ENV === 'production' // Rechazar conexiones no autorizadas en producción
     }
   },
   

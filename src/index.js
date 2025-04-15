@@ -10,7 +10,7 @@ const https = require('https');
 const http = require('http');
 
 const config = require('./config');
-const logger = require('./utils/logger');
+const logger = require("./utils/logger");
 const apiRoutes = require('./routes');
 
 // Crear aplicación Express
@@ -63,8 +63,7 @@ const PORT = config.server.port;
 
 // Función para iniciar el servidor
 const startServer = (appInstance = app) => {
-  let server;
-  
+  let server; 
   // Verificar si estamos en producción y tenemos certificados SSL
   if (config.server.isProduction) {
     try {
@@ -98,7 +97,7 @@ const startServer = (appInstance = app) => {
   }
   
   // Iniciar servidor
-  server.listen(PORT, () => {
+  server.listen(PORT, '0.0.0.0', () => {
     logger.info(`Servidor corriendo en el puerto ${PORT}`);
     logger.info(`Modo: ${config.server.nodeEnv}`);
     logger.info(`URL: ${config.server.isProduction ? 'https' : 'http'}://localhost:${PORT}`);
