@@ -59,7 +59,7 @@ const verifySmtpConnection = async (service) => {
  * @returns {Object} - Resultado del envío
  */
 const sendEmail = async (emailData) => {
-  const { to, subject, message, service, from } = emailData;
+  const { to, subject, message, service, from, attachments } = emailData;
   const messageId = uuidv4();
   
   try {
@@ -68,6 +68,20 @@ const sendEmail = async (emailData) => {
     
     // Obtener transportador SMTP
     const transporter = getTransporter(service);
+    
+    // Verificar y loggear los adjuntos
+    if (attachments && attachments.length > 0) {
+      logger.info('Detalles de adjuntos recibidos:', {
+        attachmentsCount: attachments.length,
+        attachmentsDetails: attachments.map(att => ({
+          filename: att.filename,
+          contentType: att.contentType,
+          contentDisposition: att.contentDisposition,
+          cid: att.cid,
+          contentLength: att.content ? att.content.length : 0
+        }))
+      });
+    }
     
     // Configurar opciones de correo
     const mailOptions = {
@@ -79,18 +93,27 @@ const sendEmail = async (emailData) => {
       messageId: `<${messageId}@${smtpConfig.host}>`,
       headers: {
         'X-Message-ID': messageId
-      }
+      },
+      attachments: attachments || [] // Añadir adjuntos si existen
     };
     
     // Enviar correo
-    logger.info(`Enviando correo a ${to} desde servicio ${service}`, { messageId });
+    logger.info(`Enviando correo a ${to} desde servicio ${service}`, { 
+      messageId,
+      attachmentsCount: attachments?.length || 0,
+      hasHtmlContent: !!message
+    });
+    
     const info = await transporter.sendMail(mailOptions);
     
     logger.info(`Correo enviado exitosamente`, { 
       messageId, 
       to, 
       subject,
-      response: info.response
+      response: info.response,
+      attachmentsCount: attachments?.length || 0,
+      accepted: info.accepted,
+      rejected: info.rejected
     });
     
     return {
@@ -103,7 +126,8 @@ const sendEmail = async (emailData) => {
       messageId, 
       to, 
       subject,
-      error: error.message 
+      error: error.message,
+      attachmentsCount: attachments?.length || 0
     });
     
     throw new Error(`Error al enviar correo: ${error.message}`);

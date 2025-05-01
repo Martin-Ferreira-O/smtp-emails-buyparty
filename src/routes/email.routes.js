@@ -14,7 +14,17 @@ const { validateApiKey } = require('../middleware/auth.middleware');
  *   "from": "no-reply@heaven.ticketfacil.live", // opcional, se usa la configuración predeterminada si no se proporciona
  *   "subject": "Asunto del correo",
  *   "message": "Contenido del correo electrónico",
- *   "service": "heaven" // "heaven" o "kameo"
+ *   "service": "heaven", // "heaven" o "kameo"
+ *   "attachments": [ // opcional
+ *     {
+ *       "filename": "nombre-archivo.png",
+ *       "content": "base64-string",
+ *       "encoding": "base64",
+ *       "contentType": "image/png",
+ *       "contentDisposition": "inline",
+ *       "cid": "identificador-unico"
+ *     }
+ *   ]
  * }
  * 
  * Encabezados requeridos:
